@@ -4,8 +4,18 @@ int add(int, int);
 #include <stdbool.h>
 #include <stdlib.h>
 
+// HashTable entry. Slot may be filled or empty.
+typedef struct {
+    const char* key; // Key is NULL if slot is empty.
+    void* value;
+} Entry;
+
 // Use HashTableCreate or HashTableDestroy accordingly.
-typedef struct HashTable HashTable;
+typedef struct {
+    Entry* entries; // HashTable slots.
+    size_t capacity; // Size of entries array.
+    size_t length; // Number of items in the HashTable.
+} HashTable;
 
 // Returns a HashTable* or NULL if memory allocation failed.
 HashTable* HashTableCreate(void);

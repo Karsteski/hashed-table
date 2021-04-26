@@ -1,7 +1,5 @@
-// test for proj setup
-int add(int, int);
-
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 // HashTable entry. Slot may be filled or empty.
@@ -23,10 +21,17 @@ HashTable* HashTableCreate(void);
 // Frees memory allocated for both the HashTable and its allocated keys.
 void HashTableDestroy(HashTable* table);
 
-// Obtains item using a given key (NULL-terminated string). Returns value or NULL if key was not found.
+// Obtains item using a given key (NUL-terminated string). Returns value or NULL if key was not found.
 void* HashTableGet(HashTable* table, const char* key);
 
-// Sets item using a given key (NULL-terminated string) to a value that != NULL.
+// Internal function to set an entry without expanding the table.
+static const char* HashTableSetEntry(Entry* entries, size_t capacity, const char* key, void* value, size_t* plength);
+
+// Expand HashTable to twice its current size.
+// Returns true on success, false if out of memory.
+static bool HashTableExpand(HashTable* table);
+
+// Sets item using a given key (NUL-terminated string) to a value that != NULL.
 // If key is not present in the table, it is copied to a newly allocated memory.
 // Returns address of copied key, or NULL if memory allocation failed.
 const char* HashTableSet(HashTable* table, const char* key, void* value);
@@ -52,3 +57,7 @@ HTI HashTableIterator(HashTable* table);
 // If there are no more items, return false.
 // HashTableSet should not be called during iteration.
 bool HashTableNext(HTI* iterator);
+
+// Returns 64-bit FNV-1a hash for a NUL-terminated key.
+// https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+static uint64_t HashKey(const char* key);
